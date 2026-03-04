@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>For Diya ❤️ – 1 Year</title>
+
+<style>
+html,body{
+  margin:0;
+  padding:0;
+  height:100%;
+  overflow:hidden;
+  background:radial-gradient(circle at top,#2b1b45,#140a26);
+  font-family:Arial,sans-serif;
+}
+
+/* PROGRESS BAR */
+.progress-container{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  width:92%;
+  display:flex;
+  gap:6px;
+  z-index:100;
+}
+
+.segment{
+  flex:1;
+  height:5px;
+  background:rgba(255,255,255,0.2);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.segment-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#c8a2ff,#ffffff);
+}
+
+.slide{
+  position:absolute;
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+  box-sizing:border-box;
+  opacity:0;
+  transform:scale(1.05);
+  transition:opacity .8s ease, transform .8s ease;
+}
+
+.slide.show{
+  opacity:1;
+  transform:scale(1);
+  z-index:5;
+}
+
+.fade-overlay{
+  position:fixed;
+  inset:0;
+  background:black;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 2s ease;
+  z-index:200;
+}
+
+.fade-overlay.active{
+  pointer-events:auto;
+}
+
+h1{color:#e2c8ff;}
+p{max-width:720px;font-size:18px;color:white;}
+
+.photo{
+  width:320px;
+  height:320px;
+  object-fit:cover;
+  border-radius:20px;
+  margin-bottom:20px;
+  border:3px solid #c8a2ff;
+}
+
+.intro-btn{
+  margin-top:25px;
+  padding:12px 26px;
+  border-radius:25px;
+  border:none;
+  background:#c8a2ff;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+}
+
+#finalRestart{
+  display:none;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(.8);
+  opacity:0;
+  transition:all .8s ease;
+}
+
+#finalRestart.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+}
+
+</style>
+</head>
+<body>
+
+<div class="progress-container" id="progressBar">
+  <div class="segment"><div class="segment-fill" id="seg1"></div></div>
+  <div class="segment"><div class="segment-fill" id="seg2"></div></div>
+  <div class="segment"><div class="segment-fill" id="seg3"></div></div>
+  <div class="segment"><div class="segment-fill" id="seg4"></div></div>
+</div>
+
+<div class="fade-overlay" id="fade">
+  <button class="intro-btn" id="finalRestart" onclick="restartStory()">Restart</button>
+</div>
+
+<audio id="song1" src="Shape-of-You.mp3.mp3"></audio>
+<audio id="song2" src="Senorita.mp3.mp3"></audio>
+<audio id="song3" src="Treat-You-Better.mp3.mp3"></audio>
+<audio id="song4" src="Stay.mp3.mp3"></audio>
+
+<div class="slide show" id="s0">
+  <h1>See what awaits 👀</h1>
+  <button class="intro-btn" onclick="startStory()">Begin</button>
+</div>
+
+<div class="slide" id="s1">
+  <h1>Diya ❤️</h1>
+  <p>
+    Our story is made of Minecraft nights 🧱, MLBB comebacks 🎮, hot momos burning our tongues 🥟,
+    and Diwali chaos with you laughing like a little firecracker ✨.
+    One year with you doesn’t feel like time – it feels like a home I keep returning to.
+  </p>
+</div>
+
+<div class="slide" id="s2">
+  <h1>Our Messy Beautiful Us</h1>
+  <p>
+    Every fight, every patch-up, every "I’m angry but talk to me" moment 😭💞.
+    That bracelet on your hand, the way you stayed on calls just to calm my mind,
+    you weren’t just my love – you became my safest person.
+  </p>
+</div>
+
+<div class="slide" id="s3">
+  <h1>You Saved Me 🌙</h1>
+  <p>
+    When I was lost inside my own darkness,
+    you literally picked me up from my grave and said “stand again” 🫂.
+    Your motivation rebuilt me, your voice became the reason I tried once more.
+  </p>
+</div>
+
+<div class="slide" id="s4">
+  <img class="photo" src="Snapchat-17172581.jpg.jpg">
+  <h1>My Promise</h1>
+  <p>
+    Even after the biggest fights you can reach out whenever you need me 🤝.
+    I’ll forever try to cherish our friendship, even if I fail – I’ll try again.
+    And even if someday you don’t stay with me forever,
+    I’ll keep myself the way you wished… but stay, Diya… please stay 💖.
+  </p>
+</div>
+
+<div class="slide" id="s5">
+  <h1>Thank you for always being there with me 💜</h1>
+  <p>
+    Through every high and every low,
+    you stayed.
+    And that means more than I can ever explain.
+  </p>
+</div>
+
+<script>
+let index=1;
+let totalSlides=5;
+let currentAudio=null;
+let timer=null;
+
+const durations={1:7000,2:7000,3:8000,4:12000,5:10000};
+const startTimes={1:32,2:45,3:115,4:97};
+
+function startStory(){
+  document.getElementById('s0').classList.remove('show');
+  document.getElementById('progressBar').style.display='flex';
+  index=1;
+  showSlide(index);
+  playSong(index);
+  autoplay();
+}
+
+function showSlide(i){
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('show'));
+  document.getElementById('s'+i).classList.add('show');
+  updateProgress(i);
+
+  if(i===5){
+    document.getElementById('progressBar').style.display='none';
+    setTimeout(()=>{
+      const fadeEl = document.getElementById('fade');
+      fadeEl.style.opacity='1';
+      fadeEl.classList.add('active');
+      setTimeout(()=>{
+        document.getElementById('finalRestart').style.display='block';
+        document.getElementById('finalRestart').classList.add('show');
+      },2000);
+    },6000);
+  } else {
+    document.getElementById('progressBar').style.display='flex';
+  }
+}
+
+function playSong(i){
+  const audio=document.getElementById('song'+i);
+  if(!audio) return;
+  if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;}
+  audio.currentTime=startTimes[i]||0;
+  audio.play().catch(()=>{});
+  currentAudio=audio;
+}
+
+function updateProgress(i){
+  for(let x=1;x<=4;x++){
+    const seg=document.getElementById('seg'+x);
+    seg.style.transition='none';
+    seg.style.width=(x<i)?'100%':'0%';
+  }
+  if(i<=4){
+    const active=document.getElementById('seg'+i);
+    setTimeout(()=>{
+      active.style.transition=`width ${durations[i]}ms linear`;
+      active.style.width='100%';
+    },50);
+  }
+}
+
+function autoplay(){
+  clearTimeout(timer);
+  timer=setTimeout(()=>{
+    if(index<totalSlides){
+      index++;
+      showSlide(index);
+      playSong(index);
+      autoplay();
+    }
+  },durations[index]);
+}
+
+function restartStory(){
+  clearTimeout(timer);
+  if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;}
+
+  const fadeEl = document.getElementById('fade');
+  fadeEl.style.opacity='0';
+  fadeEl.classList.remove('active');
+  document.getElementById('finalRestart').classList.remove('show');
+  document.getElementById('finalRestart').style.display='none';
+
+  document.querySelectorAll('.segment-fill').forEach(s=>{
+    s.style.transition='none';
+    s.style.width='0%';
+  });
+
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('show'));
+  document.getElementById('s0').classList.add('show');
+
+  document.getElementById('progressBar').style.display='none';
+
+  index=1;
+}
+
+window.addEventListener('click',function(e){
+  if(e.target.closest('.intro-btn')) return;
+  if(document.getElementById('s0').classList.contains('show')) return;
+  const half=window.innerWidth/2;
+  if(e.clientX>half && index<totalSlides){index++;}
+  else if(e.clientX<=half && index>1){index--;}
+  else return;
+  showSlide(index);
+  playSong(index);
+  autoplay();
+});
+</script>
+
+</body>
+</html>
